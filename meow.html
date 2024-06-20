@@ -10,7 +10,7 @@
             margin: 50px;
             text-align: center;
         }
-        input, button {
+        textarea, button {
             font-size: 16px;
             margin: 10px;
             padding: 10px;
@@ -69,17 +69,19 @@
             for (const char of inputText) {
                 if (char in meowDict) {
                     outputText += meowDict[char] + ' ';
+                } else if (char === ' ') {
+                    outputText += ' ';
                 }
             }
             document.getElementById('outputText').value = outputText.trim();
         }
 
         function translateToHuman() {
-            const inputText = document.getElementById('inputText').value.split(' ');
+            const inputText = document.getElementById('inputText').value.trim();
+            const words = inputText.split(/\s+/);
             let outputText = '';
 
-            inputText.forEach(word => {
-                let buffer = '';
+            words.forEach(word => {
                 let i = 0;
                 while (i < word.length) {
                     let matchFound = false;
