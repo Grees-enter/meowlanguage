@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Language Translator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            text-align: center;
+        }
+        input, button {
+            font-size: 16px;
+            margin: 10px;
+            padding: 10px;
+        }
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Cat Language Translator</h1>
+    <textarea id="inputText" rows="4" cols="50" placeholder="Enter text here..."></textarea><br>
+    <button onclick="translateToCat()">Translate to Cat Language</button>
+    <button onclick="translateToHuman()">Translate to Human Language</button>
+    <h2>Translation</h2>
+    <textarea id="outputText" rows="4" cols="50" readonly></textarea>
+
+    <script>
+        const meowDict = {
+            'a': "me",
+            'b': "eo",
+            'c': "ow",
+            'd': "meo",
+            'e': "eo",
+            'f': "oo",
+            'g': "owwww",
+            'h': "meeee",
+            'i': "o",
+            'j': "wy",
+            'k': "owme",
+            'l': "eow",
+            'm': "wym",
+            'n': "mmm",
+            'o': "meow",
+            'p': "meowww",
+            'q': "wymeo",
+            'r': "oweeew",
+            's': "meowi",
+            't': "owii",
+            'u': "meowim",
+            'v': "wime",
+            'w': "eowm",
+            'x': "mii",
+            'y': "ew",
+            'z': "meowmeow"
+        };
+
+        const reverseMeowDict = Object.fromEntries(
+            Object.entries(meowDict).map(([k, v]) => [v, k])
+        );
+
+        function translateToCat() {
+            const inputText = document.getElementById('inputText').value.toLowerCase();
+            let outputText = '';
+            for (const char of inputText) {
+                if (char in meowDict) {
+                    outputText += meowDict[char] + ' ';
+                }
+            }
+            document.getElementById('outputText').value = outputText.trim();
+        }
+
+        function translateToHuman() {
+            const inputText = document.getElementById('inputText').value.split(' ');
+            let outputText = '';
+
+            inputText.forEach(word => {
+                let buffer = '';
+                let i = 0;
+                while (i < word.length) {
+                    let matchFound = false;
+                    for (let length = word.length - i; length > 0; length--) {
+                        const substring = word.substring(i, i + length);
+                        if (reverseMeowDict[substring]) {
+                            outputText += reverseMeowDict[substring];
+                            i += length;
+                            matchFound = true;
+                            break;
+                        }
+                    }
+                    if (!matchFound) {
+                        i++;
+                    }
+                }
+                outputText += ' ';
+            });
+
+            document.getElementById('outputText').value = outputText.trim();
+        }
+    </script>
+
+</body>
+</html>
