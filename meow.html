@@ -26,6 +26,7 @@
     <textarea id="inputText" rows="4" cols="50" placeholder="Enter text here..."></textarea><br>
     <button onclick="translateToCat()">Translate to Cat Language</button>
     <button onclick="translateToHuman()">Translate to Human Language</button>
+    <button onclick="copyTranslation()">Copy Translation</button>
     <h2>Translation</h2>
     <textarea id="outputText" rows="4" cols="50" readonly></textarea>
 
@@ -82,13 +83,14 @@
             let outputText = '';
 
             words.forEach(word => {
+                let buffer = '';
                 let i = 0;
                 while (i < word.length) {
                     let matchFound = false;
                     for (let length = word.length - i; length > 0; length--) {
                         const substring = word.substring(i, i + length);
                         if (reverseMeowDict[substring]) {
-                            outputText += reverseMeowDict[substring];
+                            buffer += reverseMeowDict[substring];
                             i += length;
                             matchFound = true;
                             break;
@@ -98,10 +100,17 @@
                         i++;
                     }
                 }
-                outputText += ' ';
+                outputText += buffer + ' ';
             });
 
             document.getElementById('outputText').value = outputText.trim();
+        }
+
+        function copyTranslation() {
+            const outputText = document.getElementById('outputText');
+            outputText.select();
+            document.execCommand('copy');
+            alert('Translation copied to clipboard!');
         }
     </script>
 
