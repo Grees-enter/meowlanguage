@@ -21,15 +21,13 @@
     </style>
 </head>
 <body>
-
-    <h1> Meowington Translator</h1>
+    <h1>🐱 Meowington Translator</h1>
     <textarea id="inputText" rows="4" cols="50" placeholder="Enter text here..."></textarea><br>
     <button onclick="translateToCat()">Translate to Cat Language</button>
     <button onclick="translateToHuman()">Translate to Human Language</button>
     <button onclick="copyTranslation()">Copy Translation</button>
     <h2>Translation</h2>
     <textarea id="outputText" rows="4" cols="50" readonly></textarea>
-
     <script>
         const meowDict = {
             'a': "me",
@@ -59,30 +57,35 @@
             'y': "ew",
             'z': "meowmeow"
         };
-
         const reverseMeowDict = Object.fromEntries(
             Object.entries(meowDict).map(([k, v]) => [v, k])
         );
-
+        
         function translateToCat() {
             const inputText = document.getElementById('inputText').value.toLowerCase();
+            if (inputText.trim() === '') {
+                document.getElementById('outputText').value = '';
+                return;
+            }
             let outputText = '';
             for (const char of inputText) {
                 if (char in meowDict) {
-                    outputText += meowDict[char] + ' ';
+                    outputText += meowDict[char];
                 } else if (char === ' ') {
-                    outputText += ' ';
+                    outputText += ' / ';
+                } else {
+                    outputText += char;
                 }
             }
-            document.getElementById('outputText').value = outputText.trim();
+            document.getElementById('outputText').value = outputText;
         }
-
+        
         function translateToHuman() {
             const inputText = document.getElementById('inputText').value.trim();
-            const words = inputText.split(/\s+/);
+            const words = inputText.split(' / ');
             let outputText = '';
-
-            words.forEach(word => {
+            
+            words.forEach((word, wordIndex) => {
                 let buffer = '';
                 let i = 0;
                 while (i < word.length) {
@@ -97,21 +100,23 @@
                         }
                     }
                     if (!matchFound) {
+                        buffer += word[i];
                         i++;
                     }
                 }
-                outputText += buffer + ' ';
+                outputText += buffer;
+                if (wordIndex < words.length - 1) {
+                    outputText += ' ';
+                }
             });
-
-            document.getElementById('outputText').value = outputText.trim();
+            document.getElementById('outputText').value = outputText;
         }
-
+        
         function copyTranslation() {
             const outputText = document.getElementById('outputText');
             outputText.select();
             document.execCommand('copy');
         }
     </script>
-
 </body>
 </html>
