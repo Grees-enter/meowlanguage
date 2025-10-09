@@ -28,6 +28,7 @@
     <button onclick="copyTranslation()">Copy Translation</button>
     <h2>Translation</h2>
     <textarea id="outputText" rows="4" cols="50" readonly></textarea>
+
     <script>
         const meowDict = {
             'a': "me",
@@ -57,67 +58,52 @@
             'y': "ew",
             'z': "meowmeow"
         };
+
         const reverseMeowDict = Object.fromEntries(
             Object.entries(meowDict).map(([k, v]) => [v, k])
         );
-        
+
+        // Encode to cat
         function translateToCat() {
             const inputText = document.getElementById('inputText').value.toLowerCase();
             if (inputText.trim() === '') {
                 document.getElementById('outputText').value = '';
                 return;
             }
-            let outputText = '';
+            let outputTokens = [];
             for (const char of inputText) {
                 if (char in meowDict) {
-                    outputText += meowDict[char];
+                    outputTokens.push(meowDict[char]);
                 } else if (char === ' ') {
-                    outputText += ' / ';
+                    outputTokens.push('/'); // word boundary
                 } else {
-                    outputText += char;
+                    outputTokens.push(char);
                 }
             }
-            document.getElementById('outputText').value = outputText;
+            // Join with delimiter
+            document.getElementById('outputText').value = outputTokens.join('|');
         }
-        
+
+        // Decode to human
         function translateToHuman() {
             const inputText = document.getElementById('inputText').value.trim();
-            const words = inputText.split(' / ');
+            const tokens = inputText.split('|');
             let outputText = '';
-            
-            words.forEach((word, wordIndex) => {
-                let buffer = '';
-                let i = 0;
-                while (i < word.length) {
-                    let matchFound = false;
-                    // Try to find the longest match starting from current position
-                    let bestMatch = '';
-                    let bestLength = 0;
-                    
-                    for (const [meowWord, letter] of Object.entries(reverseMeowDict)) {
-                        if (word.substring(i).startsWith(meowWord) && meowWord.length > bestLength) {
-                            bestMatch = letter;
-                            bestLength = meowWord.length;
-                            matchFound = true;
-                        }
-                    }
-                    
-                    if (matchFound) {
-                        buffer += bestMatch;
-                        i += bestLength;
-                    } else {
-                        buffer += word[i];
-                        i++;
-                    }
-                }
-                outputText += buffer;
-                if (wordIndex < words.length - 1) {
+
+            tokens.forEach(token => {
+                if (token === '/') {
                     outputText += ' ';
+                } else if (reverseMeowDict[token]) {
+                    outputText += reverseMeowDict[token];
+                } else {
+                    outputText += token; // fallback
                 }
             });
+
             document.getElementById('outputText').value = outputText;
         }
-        
+
+        // Copy translation
         function copyTranslation() {
             const outputText = document.getElementById('outputText');
             outputText.select();
