@@ -90,16 +90,22 @@
                 let i = 0;
                 while (i < word.length) {
                     let matchFound = false;
-                    for (let length = word.length - i; length > 0; length--) {
-                        const substring = word.substring(i, i + length);
-                        if (reverseMeowDict[substring]) {
-                            buffer += reverseMeowDict[substring];
-                            i += length;
+                    // Try to find the longest match starting from current position
+                    let bestMatch = '';
+                    let bestLength = 0;
+                    
+                    for (const [meowWord, letter] of Object.entries(reverseMeowDict)) {
+                        if (word.substring(i).startsWith(meowWord) && meowWord.length > bestLength) {
+                            bestMatch = letter;
+                            bestLength = meowWord.length;
                             matchFound = true;
-                            break;
                         }
                     }
-                    if (!matchFound) {
+                    
+                    if (matchFound) {
+                        buffer += bestMatch;
+                        i += bestLength;
+                    } else {
                         buffer += word[i];
                         i++;
                     }
