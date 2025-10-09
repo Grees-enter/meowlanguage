@@ -63,7 +63,17 @@
             Object.entries(meowDict).map(([k, v]) => [v, k])
         );
 
-        // Encode to cat
+        // Generate random noise
+        function randomNoise(length = 2) {
+            const chars = "~!@#$%^&*1234567890";
+            let str = "";
+            for (let i = 0; i < length; i++) {
+                str += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return str;
+        }
+
+        // Encode to cat with noise
         function translateToCat() {
             const inputText = document.getElementById('inputText').value.toLowerCase();
             if (inputText.trim() === '') {
@@ -73,18 +83,17 @@
             let outputTokens = [];
             for (const char of inputText) {
                 if (char in meowDict) {
-                    outputTokens.push(meowDict[char]);
+                    outputTokens.push(meowDict[char] + randomNoise()); // add noise
                 } else if (char === ' ') {
                     outputTokens.push('/'); // word boundary
                 } else {
-                    outputTokens.push(char);
+                    outputTokens.push(char + randomNoise());
                 }
             }
-            // Join with delimiter
             document.getElementById('outputText').value = outputTokens.join('|');
         }
 
-        // Decode to human
+        // Decode (strip noise first)
         function translateToHuman() {
             const inputText = document.getElementById('inputText').value.trim();
             const tokens = inputText.split('|');
@@ -93,17 +102,20 @@
             tokens.forEach(token => {
                 if (token === '/') {
                     outputText += ' ';
-                } else if (reverseMeowDict[token]) {
-                    outputText += reverseMeowDict[token];
                 } else {
-                    outputText += token; // fallback
+                    // strip all noise chars (anything not a-z)
+                    const cleanToken = token.replace(/[^a-z]/g, '');
+                    if (reverseMeowDict[cleanToken]) {
+                        outputText += reverseMeowDict[cleanToken];
+                    } else {
+                        outputText += '?'; // fallback for unrecognized
+                    }
                 }
             });
 
             document.getElementById('outputText').value = outputText;
         }
 
-        // Copy translation
         function copyTranslation() {
             const outputText = document.getElementById('outputText');
             outputText.select();
